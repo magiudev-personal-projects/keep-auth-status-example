@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import {
     BrowserRouter,
     Routes,
@@ -10,12 +10,22 @@ import { Login } from "./pages/login";
 import { Logout } from "./pages/logout";
 import { Profile } from "./pages/profile";
 import { Register } from "./pages/register";
-import { selectJwt } from "./store/user/authSlice";
+import { clearJwt, selectJwt, setJwt } from "./store/user/authSlice";
+import {useEffect} from "react";
 
 export const Router = () => {
 
+    const dispatch = useDispatch();
     const jwt = useSelector(selectJwt);
 
+    useEffect(() => {
+        try {
+            const jwt = localStorage.getItem("jwt");
+            dispatch(setJwt(jwt));
+        } catch (error) {
+            dispatch(clearJwt());
+        }
+    }, []);
 
     return(
         <BrowserRouter>

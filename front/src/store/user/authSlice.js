@@ -1,6 +1,16 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import { client } from "../../client";
 
+export const setJwtLocalStorage = createAsyncThunk("setJwtLocalStorage", (jwt, {dispatch}) => {
+    localStorage.setItem("jwt", jwt);
+    dispatch(setJwt(jwt));
+});
+
+export const logout = createAsyncThunk("logout", (_, {dispatch}) => {
+    localStorage.removeItem("jwt");
+    dispatch(clearJwt());
+});
+
 export const register = createAsyncThunk("register", async ({username, password}) => {
     let res;
     let msg;
@@ -31,6 +41,7 @@ export const login = createAsyncThunk("login", async ({username, password}) => {
         msg = "An error occurred. Please try again.";
     } finally {
         if(!res.ok) throw new Error(msg);
+        localStorage.setItem("jwt", jwt);
         return jwt;
     }
 });
@@ -110,6 +121,18 @@ const userSlice = createSlice({
                 state.jwt = "";
                 state.fetching = false;
                 state.error = action.error.message;
+            })
+
+            // Set jwt in the localStorage
+            .addCase(setJwtLocalStorage.rejected, (state) => {
+                state.jwt = "";
+                state.error = "Something went wrong. Please log in.";
+                state.message = "";
+            })
+
+            // Log out
+            .addCase(logout.rejected, (state) => {
+                state.error = "Something went wrong. Please try again.";
             })
         }
 });

@@ -1,7 +1,6 @@
-import { useEffect } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { clearJwt, selectJwt, setError, setJwt } from "../../store/user/authSlice";
+import { clearJwt, selectJwt, setError, setJwtLocalStorage } from "../../store/user/authSlice";
 import {Link} from "react-router-dom";
 
 import {client} from "../../client";
@@ -30,7 +29,7 @@ export const Profile = () => {
                         id,
                         username,
                     });
-                    dispatch(setJwt(jwt));
+                    dispatch(setJwtLocalStorage(jwt));
                 } else {
                     dispatch(setError(message));
                     dispatch(clearJwt());
